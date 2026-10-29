@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jihan Fauzi — Teknik Komputer & Jaringan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f0e8;
+    --ink:#1a1815;
+    --ink-soft:#4a453d;
+    --line:#c9c1b2;
+    --accent:#c8451f;
+    --accent-soft:#e8d9cc;
+    --card:#faf7f1;
+    --mono:'JetBrains Mono',monospace;
+    --serif:'Fraunces',serif;
+    --sans:'Inter',sans-serif;
+  }
+
+  /* ============ DARK MODE ============ */
+  body.dark-mode {
+    --paper: #1a1815;
+    --ink: #f4f0e8;
+    --ink-soft: #c9c1b2;
+    --line: #4a453d;
+    --accent: #e85a2a;
+    --accent-soft: #3a2b25;
+    --card: #2a2724;
+    background-image: none;
+  }
+  body.dark-mode .contact { background: #2a2724; border-top-color: #4a453d; }
+  body.dark-mode .strip { background: #3a2b25; border-color: #4a453d; }
+  body.dark-mode .id-card { box-shadow: 8px 8px 0 #3a2b25; }
+  body.dark-mode .btn-primary { background: #f4f0e8; color: #1a1815; border-color: #f4f0e8; }
+  body.dark-mode .btn-primary:hover { background: var(--accent); color: #f4f0e8; border-color: var(--accent); }
+  body.dark-mode .login-box, body.dark-mode .mini-modal-content, body.dark-mode .modal-content { background: var(--card); }
+  body.dark-mode .cert-card, body.dark-mode .proj, body.dark-mode .skill-card { background: var(--card); }
+  body.dark-mode .proj .stack span, body.dark-mode .cert-img-wrapper { background: #1a1815; }
+
+  /* ============ KUSTOM KURSOR ============ */
+  body { cursor: none; }
+  a, button, label, input, textarea { cursor: none; }
+  body.admin-mode [contenteditable="true"] { cursor: text !important; }
+  
+  .custom-cursor {
+    position: fixed; top: 0; left: 0;
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 1.5px solid var(--ink); background: rgba(244, 240, 232, 0.5);
+    pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
+    transition: width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: difference; display: flex; align-items: center; justify-content: center;
+  }
+  .custom-cursor.hovering {
+    width: 60px; height: 60px; background: var(--accent); border-color: var(--accent);
+  }
+  .custom-cursor.hovering::after {
+    content: "KLIK"; font-family: var(--mono); font-size: 10px; color: var(--paper); font-weight: bold;
+  }
+  
+  @media (max-width: 900px) {
+    body, a, button, label, input, textarea, [contenteditable] { cursor: auto; }
+    .custom-cursor { display: none; }
+  }
+
+  /* ============ MODE ADMIN ============ */
+  .upload-btn, .proj-upload-btn, .cert-upload-btn, .cert-delete-btn, .btn-add-frame, 
+  .btn-add-project, .btn-add-exp, .btn-delete-item, .admin-only { display: none !important; }
+  
+  body.admin-mode .upload-btn,
+  body.admin-mode .proj-upload-btn,
+  body.admin-mode .cert-upload-btn,
+  body.admin-mode .cert-delete-btn,
+  body.admin-mode .btn-add-frame,
+  body.admin-mode .btn-add-project,
+  body.admin-mode .btn-add-exp,
+  body.admin-mode .btn-delete-item,
+  body.admin-mode .admin-only { display: flex !important; }
+  
+  body.admin-mode [contenteditable="true"]:hover { outline: 1.5px dashed var(--accent); outline-offset: 4px; }
+  body.admin-mode [contenteditable="true"]:focus { outline: 1.5px solid var(--accent); outline-offset: 4px; }
+
+  /* Tombol Admin Panel */
+  .admin-panel-actions {
+    position: fixed; top: 80px; right: 20px; z-index: 900;
+    display: none; flex-direction: column; gap: 8px;
+    background: var(--card); padding: 12px; border: 1.5px solid var(--ink); border-radius: 8px;
+    box-shadow: 4px 4px 0 var(--accent);
+  }
+  body.admin-mode .admin-panel-actions { display: flex; }
+  .admin-panel-actions button {
+    display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px;
+    background: var(--paper); border: 1px solid var(--line); padding: 8px 12px; border-radius: 4px;
+    color: var(--ink); transition: all 0.2s;
+  }
+  .admin-panel-actions button:hover { background: var(--accent-soft); border-color: var(--ink); }
+  .admin-panel-actions button.danger { color: #d9534f; }
+  .admin-panel-actions button.danger:hover { background: #d9534f; color: white; border-color: #d9534f; }
+
+  /* ============ GLOBAL ============ */
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper); color:var(--ink); font-family:var(--sans); line-height:1.65;
+    overflow-x:hidden; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    transition: background-color 0.3s, color 0.3s;
+  }
+  ::selection{background:var(--accent);color:var(--paper)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+
+  /* ============ NAV ============ */
+  header{ position:sticky;top:0;z-index:50; background:var(--paper); border-bottom:1px solid var(--line); transition: background 0.3s; }
+  nav{ display:flex;align-items:center;justify-content:space-between; padding:18px 0; }
+  .logo{ font-family:var(--serif);font-weight:900;font-size:20px;letter-spacing:-.02em; display:flex;align-items:center;gap:10px; }
+  .logo .dot{ width:10px;height:10px;background:var(--accent);border-radius:50%; display:inline-block; animation:pulse 2.4s infinite; }
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.75);opacity:.55}}
+  .nav-links{display:flex;gap:30px;list-style:none;align-items: center;}
+  .nav-links a{ color:var(--ink-soft);text-decoration:none;font-size:14px;font-weight:500; position:relative;padding-bottom:2px;transition:color .25s; }
+  .nav-links a::after{ content:"";position:absolute;left:0;bottom:0;width:0;height:1.5px; background:var(--accent);transition:width .3s ease; }
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a:hover::after{width:100%}
+
+  .admin-login-trigger {
+    background: transparent; border: 1.5px solid var(--line); color: var(--ink-soft);
+    padding: 6px 12px; border-radius: 999px; font-family: var(--mono); font-size: 11px;
+    transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .admin-login-trigger:hover { border-color: var(--ink); color: var(--ink); }
+  .admin-login-trigger svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+  body.admin-mode .admin-login-trigger { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+  /* ============ HERO ============ */
+  .hero{padding:80px 0 60px;position:relative}
+  .hero-grid{ display:grid;grid-template-columns:1.35fr .9fr;gap:56px;align-items:end; }
+  .eyebrow{ font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase; color:var(--accent);margin-bottom:22px;display:flex;align-items:center;gap:12px; }
+  .eyebrow::before{content:"";width:38px;height:1.5px;background:var(--accent)}
+  h1{ font-family:var(--serif);font-weight:900; font-size:clamp(48px,8vw,96px);line-height:.92;letter-spacing:-.035em; margin-bottom:28px; }
+  h1 .it{font-style:italic;font-weight:400;color:var(--accent)}
+  .hero p.lead{ font-size:17.5px;color:var(--ink-soft);max-width:480px;margin-bottom:34px; }
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .btn{ font-family:var(--sans);font-weight:600;font-size:14px; padding:13px 26px;border-radius:999px;text-decoration:none; display:inline-flex;align-items:center;gap:9px;transition:all .28s ease; border:1.5px solid var(--ink); }
+  .btn-primary{background:var(--ink);color:var(--paper)}
+  .btn-primary:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-2px); color: var(--paper);}
+  .btn-ghost{color:var(--ink);background:transparent}
+  .btn-ghost:hover{background:var(--accent-soft);border-color:var(--ink)}
+
+  /* foto / id-card hand-drawn */
+  .id-card{ background:var(--card);border:1.5px solid var(--ink); border-radius:14px;padding:22px;position:relative; transform:rotate(-1.6deg);box-shadow:8px 8px 0 var(--accent-soft); transition:transform .4s ease, box-shadow .4s ease; }
+  .id-card:hover{transform:rotate(0deg) translateY(-4px);box-shadow:12px 12px 0 var(--accent-soft)}
+  .avatar-container { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 9px; overflow: hidden; background: linear-gradient(135deg,#d9c9b6,#c0ad96); display: flex; align-items: center; justify-content: center; }
+  .avatar-container img { width: 100%; height: 100%; object-fit: cover; display: none; }
+  .avatar-container .placeholder-svg { width: 66%; height: 66%; opacity: .55; display: block; }
+  .upload-btn { position: absolute; bottom: 12px; right: 12px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 8px; padding: 8px 12px; font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--ink); display: flex; align-items: center; gap: 6px; transition: all 0.2s ease; box-shadow: 2px 2px 0 var(--ink); z-index: 10; }
+  .upload-btn:hover { background: var(--accent-soft); transform: translateY(-2px); box-shadow: 3px 3px 0 var(--ink); }
+  #file-upload { display: none; }
+  .id-card .meta{ margin-top:16px;display:flex;justify-content:space-between;align-items:center; font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase; color:var(--ink-soft); }
+  .tape{ position:absolute;top:-12px;left:50%;transform:translateX(-50%) rotate(-3deg); width:88px;height:26px;background:rgba(200,69,31,.16); border:1px dashed rgba(200,69,31,.45); }
+
+  /* ============ MARQUEE STRIP ============ */
+  .strip{ border-top:1px solid var(--line);border-bottom:1px solid var(--line); overflow:hidden;padding:16px 0;margin-top:34px; background:var(--accent-soft); transition: background 0.3s;}
+  .strip-inner{ display:flex;gap:44px;white-space:nowrap; animation:scroll 26s linear infinite; font-family:var(--serif);font-style:italic;font-size:20px;color:var(--ink-soft); }
+  .strip-inner span{display:flex;align-items:center;gap:44px}
+  .strip-inner span::after{content:"✳";color:var(--accent);font-style:normal}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ============ SECTION ============ */
+  section{padding:88px 0}
+  .sec-head{margin-bottom:52px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px;}
+  .sec-num{ font-family:var(--mono);font-size:12px;letter-spacing:.16em;color:var(--accent); text-transform:uppercase;display:block;margin-bottom:10px; }
+  .sec-head h2{ font-family:var(--serif);font-weight:900;font-size:clamp(32px,5vw,52px); letter-spacing:-.03em;line-height:1.02; }
+  .sec-head h2 em{font-style:italic;font-weight:400}
+
+  /* ============ ABOUT ============ */
+  .about-grid{display:grid;grid-template-columns:1fr 1.1fr;gap:64px;align-items:start}
+  .about-grid .big-quote{ font-family:var(--serif);font-size:26px;line-height:1.35;font-weight:400; letter-spacing:-.01em; }
+  .about-grid .big-quote em{font-style:italic;color:var(--accent)}
+  .about-body p{color:var(--ink-soft);margin-bottom:18px;font-size:15.5px}
+  .facts{ display:grid;grid-template-columns:1fr 1fr;gap:0; border:1.5px solid var(--ink);border-radius:12px;overflow:hidden;margin-top:28px; }
+  .fact{padding:18px 20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .fact:nth-child(2n){border-right:none}
+  .fact:nth-child(n+3){border-bottom:none}
+  .fact .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+  .fact .v{font-family:var(--serif);font-size:19px;font-weight:600}
+
+  /* ============ SKILLS ============ */
+  .skills-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  .skill-card{ background:var(--card);border:1.5px solid var(--ink);border-radius:12px; padding:26px 22px;transition:transform .3s ease, box-shadow .3s ease; position:relative; }
+  .skill-card:hover{transform:translateY(-5px);box-shadow:6px 6px 0 var(--accent-soft)}
+  .skill-card .num{ font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.1em; margin-bottom:16px;display:block; }
+  .skill-card h3{ font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em; margin-bottom:14px; }
+  .tags{display:flex;flex-wrap:wrap;gap:7px}
+  .tag{ font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:999px; background:var(--accent-soft);color:var(--ink-soft);border:1px solid var(--line); }
+
+  /* ============ EXPERIENCE / TIMELINE ============ */
+  .timeline-container { position: relative; }
+  .timeline{position:relative;padding-left:34px}
+  .timeline::before{ content:"";position:absolute;left:9px;top:6px;bottom:6px;width:1.5px; background:repeating-linear-gradient(to bottom,var(--line) 0 6px,transparent 6px 12px); }
+  .tl-item{position:relative;padding-bottom:44px}
+  .tl-item:last-child{padding-bottom:0}
+  .tl-item::before{ content:"";position:absolute;left:-32px;top:7px;width:13px;height:13px; background:var(--paper);border:2px solid var(--accent);border-radius:50%; }
+  .tl-item .when{ font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;text-transform:uppercase; color:var(--accent);margin-bottom:7px; }
+  .tl-item h3{font-family:var(--serif);font-size:23px;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+  .tl-item .where{font-size:13.5px;color:var(--ink-soft);font-weight:500;margin-bottom:12px}
+  .tl-item p{font-size:14.5px;color:var(--ink-soft);max-width:600px}
+  
+  .btn-delete-item { position: absolute; right: 0; top: 0; background: none; border: none; color: var(--ink-soft); padding: 5px; border-radius: 4px; }
+  .btn-delete-item:hover { color: #d9534f; background: rgba(217, 83, 79, 0.1); }
+  .btn-delete-item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  /* ============ PROJECTS ============ */
+  .proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .proj{ border:1.5px solid var(--ink);border-radius:14px;overflow:hidden; background:var(--card);transition:transform .3s ease,box-shadow .3s ease; display:flex;flex-direction:column; position: relative;}
+  .proj:hover{transform:translateY(-5px);box-shadow:8px 8px 0 var(--accent-soft)}
+  .proj .thumb{ height:150px;display:flex;align-items:center;justify-content:center; border-bottom:1.5px solid var(--ink);position:relative;overflow:hidden; }
+  .proj .thumb .thumb-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+  .proj:nth-child(1) .thumb-bg{background:linear-gradient(135deg,#e8d9cc,#d9c3ac)}
+  .proj:nth-child(2) .thumb-bg{background:linear-gradient(135deg,#d5d9cc,#b8c2a8)}
+  .proj:nth-child(3) .thumb-bg{background:linear-gradient(135deg,#d9ccd5,#bfa8c2)}
+  .proj:nth-child(4) .thumb-bg{background:linear-gradient(135deg,#ccd9e8,#a8c2d9)}
+  .proj .thumb svg{width:54px;height:54px;opacity:.5;transition:opacity 0.3s; z-index: 1;}
+  .proj .thumb .proj-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; display: none; z-index: 2; }
+  .proj-upload-btn { position: absolute; bottom: 10px; right: 10px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 6px; padding: 6px 10px; font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 5px; transition: all 0.2s ease; box-shadow: 2px 2px 0 var(--ink); z-index: 10; }
+  .proj-upload-btn:hover { background: var(--accent-soft); transform: translateY(-2px); box-shadow: 3px 3px 0 var(--ink); }
+  .proj-upload-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .proj .body{padding:22px 24px 26px}
+  .proj .body h3{ font-family:var(--serif);font-size:21px;font-weight:600;margin-bottom:8px; letter-spacing:-.01em; }
+  .proj .body p{font-size:14px;color:var(--ink-soft);margin-bottom:16px}
+  .proj .stack{display:flex;flex-wrap:wrap;gap:6px}
+  .proj .stack span{ font-family:var(--mono);font-size:10.5px;letter-spacing:.04em; padding:3px 9px;border-radius:4px;background:var(--paper); border:1px solid var(--line);color:var(--ink-soft); }
+
+  /* ============ CONTACT ============ */
+  .contact{ border-top:1.5px solid var(--ink); background:var(--ink);color:var(--paper); padding:88px 0 56px;margin-top:40px; position:relative;overflow:hidden; }
+  .contact::before{ content:"HALO";position:absolute;right:-2%;top:50%;transform:translateY(-50%); font-family:var(--serif);font-weight:900;font-size:clamp(180px,28vw,340px); color:rgba(244,240,232,.035);letter-spacing:-.05em;pointer-events:none;line-height:1; }
+  .contact .sec-num{color:var(--accent)}
+  .contact h2{ font-family:var(--serif);font-weight:900;font-size:clamp(40px,7vw,80px); letter-spacing:-.035em;line-height:.95;margin-bottom:28px; }
+  .contact h2 em{font-style:italic;font-weight:400;color:var(--accent-soft)}
+  .contact .lead{color:rgba(244,240,232,.68);max-width:440px;margin-bottom:40px;font-size:16px}
+  .contact-links{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:56px}
+  .contact-links a{ color:var(--paper);text-decoration:none;font-weight:500;font-size:14px; padding:12px 24px;border:1.5px solid rgba(244,240,232,.35);border-radius:999px; display:inline-flex;align-items:center;gap:10px;transition:all .28s ease; }
+  .contact-links a:hover{background:var(--accent);border-color:var(--accent);transform:translateY(-2px)}
+  .contact-links a svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+  .footer-bar{ display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px; padding-top:28px;border-top:1px solid rgba(244,240,232,.15); font-family:var(--mono);font-size:11.5px;letter-spacing:.06em; color:rgba(244,240,232,.45); }
+  .footer-bar a{color:rgba(244,240,232,.7);text-decoration:none}
+  .footer-bar a:hover{color:var(--accent)}
+
+  /* ============ MODAL ============ */
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 24, 21, 0.85); backdrop-filter: blur(6px); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+  .modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .modal-content { background: var(--paper); border: 1.5px solid var(--ink); border-radius: 16px; width: 90%; max-width: 1000px; max-height: 90vh; overflow-y: auto; padding: 40px; position: relative; transform: translateY(20px) scale(0.98); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 12px 12px 0 var(--accent); }
+  .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
+  .modal-content::-webkit-scrollbar { width: 8px; }
+  .modal-content::-webkit-scrollbar-track { background: var(--paper); border-radius: 4px; }
+  .modal-content::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+  .modal-close { position: absolute; top: 24px; right: 24px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .modal-close:hover { background: var(--accent-soft); transform: rotate(90deg); }
+  .modal-close svg { width: 20px; height: 20px; stroke: var(--ink); stroke-width: 2; }
+  .modal-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;}
+  .modal-header-text h2 { font-family: var(--serif); font-size: 36px; font-weight: 900; letter-spacing: -.02em; margin-bottom: 8px; }
+  .modal-header-text p { color: var(--ink-soft); font-size: 15px; }
+
+  .btn-add-frame { background: var(--paper); border: 1.5px solid var(--ink); border-radius: 8px; padding: 10px 16px; font-family: var(--sans); font-weight: 600; font-size: 13px; color: var(--ink); display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; box-shadow: 3px 3px 0 var(--ink); margin-top: 10px; }
+  .btn-add-frame:hover { background: var(--accent-soft); transform: translateY(-2px); box-shadow: 4px 4px 0 var(--ink); }
+  .btn-add-frame svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2; }
+
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+  .cert-card { background: var(--card); border: 1.5px solid var(--ink); border-radius: 12px; overflow: hidden; transition: transform 0.3s ease, box-shadow 0.3s ease; display: flex; flex-direction: column; position: relative; }
+  .cert-card:hover { transform: translateY(-5px); box-shadow: 6px 6px 0 var(--accent-soft); }
+  .cert-img-wrapper { width: 100%; aspect-ratio: 4/3; background: #e8e0d5; border-bottom: 1.5px solid var(--ink); overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
+  .cert-img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+  .cert-card:hover .cert-img-wrapper img { transform: scale(1.05); }
+  .cert-upload-btn { position: absolute; bottom: 10px; right: 10px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 6px; padding: 6px 10px; font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--ink); display: flex; align-items: center; gap: 5px; transition: all 0.2s ease; box-shadow: 2px 2px 0 var(--ink); z-index: 10; }
+  .cert-upload-btn:hover { background: var(--accent-soft); transform: translateY(-2px); box-shadow: 3px 3px 0 var(--ink); }
+  .cert-upload-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+  .cert-info { padding: 18px; display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .cert-info > div { flex-grow: 1; }
+  .cert-info h4 { font-family: var(--serif); font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+  .cert-info .cert-meta { font-family: var(--mono); font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: .1em; }
+
+  .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+  .lightbox-overlay.active { opacity: 1; pointer-events: auto; }
+  .lightbox-overlay img { max-width: 90%; max-height: 90vh; border: 2px solid var(--paper); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.3s ease; }
+  .lightbox-overlay.active img { transform: scale(1); }
+
+  .mini-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 24, 21, 0.6); backdrop-filter: blur(4px); z-index: 1200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+  .mini-modal-overlay.active { opacity: 1; pointer-events: auto; }
+  .mini-modal-content { background: var(--paper); border: 1.5px solid var(--ink); border-radius: 12px; padding: 30px; width: 90%; max-width: 400px; box-shadow: 6px 6px 0 var(--accent); transform: translateY(10px); transition: transform 0.3s ease; }
+  .mini-modal-overlay.active .mini-modal-content { transform: translateY(0); }
+  .mini-modal-content h3 { font-family: var(--serif); font-size: 24px; margin-bottom: 20px; letter-spacing: -.01em; }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--ink-soft); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .1em; }
+  .form-group input, .form-group textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 6px; font-family: var(--sans); font-size: 14px; background: var(--card); color: var(--ink); outline: none; transition: border-color 0.2s; }
+  .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
+  .mini-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+  .btn-small { padding: 8px 16px; border-radius: 6px; font-family: var(--sans); font-weight: 600; font-size: 13px; transition: all 0.2s; }
+  .btn-cancel { background: transparent; border: 1.5px solid var(--line); color: var(--ink-soft); }
+  .btn-cancel:hover { background: var(--line); color: var(--ink); }
+  .btn-save { background: var(--ink); border: 1.5px solid var(--ink); color: var(--paper); }
+  .btn-save:hover { background: var(--accent); border-color: var(--accent); }
+
+  /* Modal Login Admin */
+  .login-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(26, 24, 21, 0.85); backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+  .login-modal.active { opacity: 1; pointer-events: auto; }
+  .login-box { background: var(--card); border: 1.5px solid var(--ink); border-radius: 12px; padding: 40px 30px; width: 90%; max-width: 360px; text-align: center; box-shadow: 8px 8px 0 var(--accent); transform: translateY(20px); transition: transform 0.3s ease; }
+  .login-modal.active .login-box { transform: translateY(0); }
+  .login-box h3 { font-family: var(--serif); font-size: 26px; font-weight: 900; margin-bottom: 8px; letter-spacing: -.02em; }
+  .login-box p { color: var(--ink-soft); font-size: 14px; margin-bottom: 24px; }
+  .login-box input { width: 100%; padding: 12px; border: 1.5px solid var(--line); border-radius: 8px; font-family: var(--mono); font-size: 16px; text-align: center; background: var(--paper); margin-bottom: 16px; outline: none; transition: border-color 0.2s; }
+  .login-box input:focus { border-color: var(--accent); }
+  .login-box .btn-primary { width: 100%; justify-content: center; border-radius: 8px; padding: 12px; }
+  
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  /* ============ PRINT STYLES (CETAK CV) ============ */
+  @media print {
+    body { background: white !important; color: black !important; cursor: auto !important; }
+    .custom-cursor, .admin-panel-actions, .admin-login-trigger, .cta-row, 
+    .contact-links, .btn-upload, .proj-upload-btn, .cert-upload-btn, .btn-delete-item, 
+    .btn-add-frame, .btn-add-project, .btn-add-exp, .strip, .modal-overlay, .login-modal,
+    .footer-bar, #open-gallery-btn, .upload-btn { 
+      display: none !important; 
+    }
+    header { position: static; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; }
+    .hero { padding: 0; margin-bottom: 30px; }
+    .hero-grid { display: block; }
+    .id-card { display: none !important; }
+    .skills-grid, .proj-grid { display: block; }
+    .skill-card, .proj, .cert-card { page-break-inside: avoid; border: 1px solid black !important; box-shadow: none !important; margin-bottom: 20px; }
+    .contact { background: white !important; color: black !important; padding: 20px 0; }
+    .contact::before { display: none; }
+    .contact h2, .contact .sec-num, .contact .lead { color: black !important; }
+    .contact h2 { font-size: 24px; margin-bottom: 10px; }
+    .contact .lead { font-size: 12px; }
+    a { text-decoration: none; color: black !important; }
+  }
+  @media(max-width:900px){
+    .hero-grid{grid-template-columns:1fr;gap:44px}
+    .id-card{max-width:340px;transform:rotate(-1.2deg)}
+    .about-grid{grid-template-columns:1fr;gap:36px}
+    .skills-grid{grid-template-columns:1fr 1fr}
+    .proj-grid{grid-template-columns:1fr}
+    .modal-content { padding: 24px; border-radius: 12px; width: 95%; }
+    .modal-close { top: 16px; right: 16px; width: 36px; height: 36px; }
+    .modal-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    body.admin-mode .btn-add-frame, body.admin-mode .btn-add-project, body.admin-mode .btn-add-exp { width: 100%; justify-content: center; }
+  }
+  @media(max-width:600px){
+    .wrap{padding:0 20px}
+    .nav-links{display:none}
+    .hero{padding:52px 0 40px}
+    section{padding:60px 0}
+    .skills-grid{grid-template-columns:1fr}
+    .facts{grid-template-columns:1fr}
+    .fact{border-right:none !important;border-bottom:1px solid var(--line) !important}
+    .fact:last-child{border-bottom:none !important}
+    .contact::before{font-size:180px}
+    .gallery-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="custom-cursor" id="custom-cursor"></div>
+
+<!-- Admin Panel Actions -->
+<div class="admin-panel-actions">
+  <button id="toggle-dark-mode">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    Tema
+  </button>
+  <button id="export-data">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    Backup JSON
+  </button>
+  <input type="file" id="import-data-input" accept=".json" style="display: none;" />
+  <button id="import-data-btn">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+    Pulihkan JSON
+  </button>
+  <button id="reset-data" class="danger">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+    Reset Semua
+  </button>
+</div>
+
+<header>
+  <div class="wrap">
+    <nav>
+      <div class="logo"><span class="dot"></span>Jihan Fauzi</div>
+      <ul class="nav-links">
+        <li><a href="#tentang">Tentang</a></li>
+        <li><a href="#skill">Keahlian</a></li>
+        <li><a href="#pengalaman">Pengalaman</a></li>
+        <li><a href="#proyek">Proyek</a></li>
+        <li><a href="#kontak">Kontak</a></li>
+        <li>
+          <button class="admin-login-trigger" id="admin-login-btn" title="Login Admin">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span id="admin-btn-text">Login</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<section class="hero" style="padding-top:0;padding-bottom:0">
+  <div class="wrap">
+    <div class="hero-grid" style="padding-top:64px">
+      <div>
+        <div class="eyebrow" contenteditable="false" id="edit-eyebrow">Lulusan Teknik Komputer &amp; Jaringan</div>
+        <h1 contenteditable="false" id="edit-h1">Merancang jaringan <span class="it">yang</span> berbicara.</h1>
+        <p class="lead" contenteditable="false" id="edit-lead">
+          Saya Jihan Fauzi — lulusan TKJ yang tumbuh di antara kabel,
+          konfigurasi router, dan rasa penasaran bagaimana data bisa
+          berpindah tanpa terasa. Fokus saya: infrastruktur jaringan yang
+          rapi, aman, dan bisa diandalkan.
+        </p>
+        <div class="cta-row">
+          <a href="#proyek" class="btn btn-primary">Lihat Proyek →</a>
+          <a href="#kontak" class="btn btn-ghost">Hubungi Saya</a>
+          <button class="btn btn-ghost admin-only" id="print-cv-btn" style="border-color: var(--accent); color: var(--accent);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Cetak CV
+          </button>
+        </div>
+      </div>
+
+      <div class="id-card">
+        <div class="tape"></div>
+        <div class="avatar-container">
+          <img id="profile-img" src="" alt="Foto Jihan Fauzi" />
+          <svg class="placeholder-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="38" r="18" fill="#1a1815"/>
+            <path d="M18 92c0-18 14-30 32-30s32 12 32 30" fill="#1a1815"/>
+          </svg>
+          <label for="file-upload" class="upload-btn" title="Ubah Foto Profil">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            Ganti Foto
+          </label>
+          <input type="file" id="file-upload" accept="image/*" />
+        </div>
+        <div class="meta">
+          <span><strong>ID</strong> · <span contenteditable="false" id="edit-id">TKJ-2024</span></span>
+          <span><strong>Status</strong> · <span contenteditable="false" id="edit-status">Terbuka</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="strip-inner">
+      <span>Mikrotik &amp; Cisco</span>
+      <span>Konfigurasi Routing</span>
+      <span>Linux Server</span>
+      <span>Firewall &amp; Keamanan</span>
+      <span>Subnetting VLSM</span>
+      <span>Mikrotik &amp; Cisco</span>
+      <span>Konfigurasi Routing</span>
+      <span>Linux Server</span>
+      <span>Firewall &amp; Keamanan</span>
+      <span>Subnetting VLSM</span>
+    </div>
+  </div>
+</section>
+
+<section id="tentang">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="sec-num">01 — Tentang</span>
+        <h2>Di balik <em>koneksi</em> yang stabil.</h2>
+      </div>
+    </div>
+    <div class="about-grid">
+      <div class="reveal">
+        <p class="big-quote" contenteditable="false" id="edit-quote">
+          "Jaringan yang baik itu <em>tidak terlihat</em> — ia hanya bekerja.
+          Tugas saya memastikan hal itu terjadi setiap hari."
+        </p>
+      </div>
+      <div class="about-body reveal">
+        <p contenteditable="false" id="edit-about-1">
+          Saya lulusan SMK Teknik Komputer dan Jaringan yang sekarang
+          mendalami administrasi jaringan dan keamanan infrastruktur.
+          Mulai dari merakit kabel UTP, konfigurasi VLAN di switch, sampai
+          membangun server Linux untuk kebutuhan internal.
+        </p>
+        <p contenteditable="false" id="edit-about-2">
+          Saya suka bekerja sistematis: dokumentasi rapi, topologi jelas,
+          dan konfigurasi yang bisa dipertanggungjawabkan. Di luar itu,
+          saya senang berbagi ilmu lewat tulisan dan diskusi teknis.
+        </p>
+        <div class="facts" style="margin-bottom: 28px;">
+          <div class="fact">
+            <div class="k">Pendidikan</div>
+            <div class="v" contenteditable="false" id="edit-fact-1">TKJ — SMK</div>
+          </div>
+          <div class="fact">
+            <div class="k">Fokus</div>
+            <div class="v" contenteditable="false" id="edit-fact-2">Jaringan &amp; Server</div>
+          </div>
+          <div class="fact">
+            <div class="k">Sertifikasi</div>
+            <div class="v" contenteditable="false" id="edit-fact-3">MTCNA · Cisco</div>
+          </div>
+          <div class="fact">
+            <div class="k">Lokasi</div>
+            <div class="v" contenteditable="false" id="edit-fact-4">Indonesia</div>
+          </div>
+        </div>
+        <button id="open-gallery-btn" class="btn btn-primary" style="border-radius: 8px; padding: 12px 20px; box-shadow: 4px 4px 0 var(--accent-soft);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Lihat Semua Sertifikat
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skill" style="border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="sec-num">02 — Keahlian</span>
+        <h2>Perangkat yang saya <em>kuasai</em>.</h2>
+      </div>
+    </div>
+    <div class="skills-grid" id="skills-container">
+      <!-- Dirender via JS -->
+    </div>
+  </div>
+</section>
+
+<section id="pengalaman">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="sec-num">03 — Pengalaman</span>
+        <h2>Jejak <em>belajar</em> &amp; kerja.</h2>
+      </div>
+      <button class="btn-add-frame admin-only" id="add-exp-btn" style="margin-top:0;">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14"/></svg> Tambah Pengalaman
+      </button>
+    </div>
+    <div class="timeline-container">
+      <div class="timeline" id="exp-container">
+        <!-- Dirender via JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="proyek" style="border-top:1px solid var(--line)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div>
+        <span class="sec-num">04 — Proyek</span>
+        <h2>Yang pernah saya <em>bangun</em>.</h2>
+      </div>
+      <button class="btn-add-frame admin-only" id="add-proj-btn" style="margin-top:0;">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14"/></svg> Tambah Proyek
+      </button>
+    </div>
+    <div class="proj-grid" id="projects-container">
+      <!-- Dirender via JS -->
+    </div>
+  </div>
+</section>
+
+<section id="kontak" class="contact">
+  <div class="wrap">
+    <div class="sec-head reveal" style="margin-bottom:24px">
+      <span class="sec-num">05 — Kontak</span>
+    </div>
+    
+    <!-- TEKS JUDUL KONTAK DIBERI ID UNTUK DIEDIT -->
+    <h2 class="reveal" contenteditable="false" id="edit-contact-title">Mari <em>terhubung</em>.</h2>
+    
+    <p class="lead reveal" contenteditable="false" id="edit-contact-lead">
+      Terbuka untuk peluang kerja, kolaborasi proyek jaringan,
+      atau sekadar diskusi teknis. Saya akan senang membalasnya.
+    </p>
+    
+    <div class="contact-links reveal">
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=jihan.fauzi@email.com" target="_blank" rel="noopener" aria-label="Kirim Email">
+        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
+        Email
+      </a>
+      <a href="https://linkedin.com/in/jihanfauzi" target="_blank" rel="noopener" aria-label="Profil LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://github.com/jihanfauzi" target="_blank" rel="noopener" aria-label="Profil GitHub">
+        <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        GitHub
+      </a>
+      <a href="https://wa.me/6281234567890" target="_blank" rel="noopener" aria-label="Hubungi via WhatsApp">
+        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+        WhatsApp
+      </a>
+      <a href="https://instagram.com/jihanfauzi" target="_blank" rel="noopener" aria-label="Profil Instagram">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        Instagram
+      </a>
+      <a href="https://tiktok.com/@jihanfauzi" target="_blank" rel="noopener" aria-label="Profil TikTok">
+        <svg viewBox="0 0 24 24"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
+        TikTok
+      </a>
+    </div>
+
+    <!-- FOOTER BAR DIBERI ID UNTUK DIEDIT -->
+    <div class="footer-bar">
+      <span contenteditable="false" id="edit-footer-1">© 2024 Jihan Fauzi — Teknik Komputer &amp; Jaringan</span>
+      <span contenteditable="false" id="edit-footer-2">Dirancang &amp; dibangun sendiri · <a href="#tentang">kembali ke atas ↑</a></span>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL GALERI SERTIFIKAT -->
+<div class="modal-overlay" id="cert-gallery-modal">
+  <div class="modal-content">
+    <button class="modal-close" id="close-gallery-btn" aria-label="Tutup Galeri">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    
+    <div class="modal-header">
+      <div class="modal-header-text">
+        <span class="sec-num">Arsip Penghargaan</span>
+        <h2>Galeri <em>Sertifikat</em>.</h2>
+        <p>Kumpulan sertifikasi kompetensi yang mendukung keahlian teknis saya.</p>
+      </div>
+      <button class="btn-add-frame" id="open-add-modal-btn">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14"/></svg>
+        Tambah Sertifikat
+      </button>
+    </div>
+
+    <div class="gallery-grid" id="cert-gallery-grid">
+      <!-- Dirender JS -->
+    </div>
+  </div>
+</div>
+
+<div class="lightbox-overlay" id="lightbox-modal" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="Perbesar Sertifikat" />
+</div>
+
+<!-- MODAL TAMBAH SERTIFIKAT -->
+<div class="mini-modal-overlay" id="add-cert-modal">
+  <div class="mini-modal-content">
+    <h3>Tambah Bingkai Sertifikat</h3>
+    <div class="form-group">
+      <label for="new-cert-title">Judul Sertifikat</label>
+      <input type="text" id="new-cert-title" placeholder="Contoh: MTCRE" />
+    </div>
+    <div class="form-group">
+      <label for="new-cert-meta">Penerbit / Tahun</label>
+      <input type="text" id="new-cert-meta" placeholder="Contoh: Mikrotik · 2024" />
+    </div>
+    <div class="mini-modal-actions">
+      <button class="btn-small btn-cancel" id="cancel-add-cert-btn">Batal</button>
+      <button class="btn-small btn-save" id="save-add-cert-btn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TAMBAH PROYEK -->
+<div class="mini-modal-overlay" id="add-proj-modal">
+  <div class="mini-modal-content">
+    <h3>Tambah Proyek Baru</h3>
+    <div class="form-group">
+      <label for="new-proj-title">Judul Proyek</label>
+      <input type="text" id="new-proj-title" placeholder="Contoh: Jaringan Kantor" />
+    </div>
+    <div class="form-group">
+      <label for="new-proj-desc">Deskripsi Singkat</label>
+      <textarea id="new-proj-desc" rows="3" placeholder="Deskripsi proyek..."></textarea>
+    </div>
+    <div class="form-group">
+      <label for="new-proj-stack">Tech Stack (pisahkan koma)</label>
+      <input type="text" id="new-proj-stack" placeholder="Mikrotik, VLAN, Switch" />
+    </div>
+    <div class="mini-modal-actions">
+      <button class="btn-small btn-cancel" id="cancel-add-proj-btn">Batal</button>
+      <button class="btn-small btn-save" id="save-add-proj-btn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TAMBAH PENGALAMAN -->
+<div class="mini-modal-overlay" id="add-exp-modal">
+  <div class="mini-modal-content">
+    <h3>Tambah Pengalaman</h3>
+    <div class="form-group">
+      <label for="new-exp-when">Tahun</label>
+      <input type="text" id="new-exp-when" placeholder="Contoh: 2023 - 2024" />
+    </div>
+    <div class="form-group">
+      <label for="new-exp-title">Posisi / Judul</label>
+      <input type="text" id="new-exp-title" placeholder="Contoh: Teknisi Jaringan" />
+    </div>
+    <div class="form-group">
+      <label for="new-exp-where">Perusahaan / Tempat</label>
+      <input type="text" id="new-exp-where" placeholder="Contoh: PT. ABC" />
+    </div>
+    <div class="form-group">
+      <label for="new-exp-desc">Deskripsi</label>
+      <textarea id="new-exp-desc" rows="3" placeholder="Deskripsi pekerjaan..."></textarea>
+    </div>
+    <div class="mini-modal-actions">
+      <button class="btn-small btn-cancel" id="cancel-add-exp-btn">Batal</button>
+      <button class="btn-small btn-save" id="save-add-exp-btn">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LOGIN ADMIN -->
+<div class="login-modal" id="admin-login-modal">
+  <div class="login-box">
+    <h3>Admin Panel</h3>
+    <p>Masukkan password untuk mengedit portofolio.</p>
+    <input type="password" id="admin-password-input" placeholder="Password..." />
+    <button class="btn btn-primary" id="submit-login-btn">Masuk</button>
+    <button class="btn btn-ghost" id="cancel-login-btn" style="margin-top: 10px; width: 100%; justify-content: center;">Batal</button>
+  </div>
+</div>
+
+<script>
+  // ==========================================
+  // 0. VARIABEL GLOBAL & UTILS
+  // ==========================================
+  const ADMIN_PASSWORD = 'admin123'; // GANTI PASSWORD DI SINI
+  let db = {}; 
+
+  // Default State
+  const defaultState = {
+    texts: {
+      'edit-eyebrow': 'Lulusan Teknik Komputer & Jaringan',
+      'edit-h1': 'Merancang jaringan <span class="it">yang</span> berbicara.',
+      'edit-lead': 'Saya Jihan Fauzi — lulusan TKJ yang tumbuh di antara kabel, konfigurasi router, dan rasa penasaran bagaimana data bisa berpindah tanpa terasa. Fokus saya: infrastruktur jaringan yang rapi, aman, dan bisa diandalkan.',
+      'edit-id': 'TKJ-2024',
+      'edit-status': 'Terbuka',
+      'edit-quote': '"Jaringan yang baik itu <em>tidak terlihat</em> — ia hanya bekerja. Tugas saya memastikan hal itu terjadi setiap hari."',
+      'edit-about-1': 'Saya lulusan SMK Teknik Komputer dan Jaringan yang sekarang mendalami administrasi jaringan dan keamanan infrastruktur. Mulai dari merakit kabel UTP, konfigurasi VLAN di switch, sampai membangun server Linux untuk kebutuhan internal.',
+      'edit-about-2': 'Saya suka bekerja sistematis: dokumentasi rapi, topologi jelas, dan konfigurasi yang bisa dipertanggungjawabkan. Di luar itu, saya senang berbagi ilmu lewat tulisan dan diskusi teknis.',
+      'edit-fact-1': 'TKJ — SMK',
+      'edit-fact-2': 'Jaringan & Server',
+      'edit-fact-3': 'MTCNA · Cisco',
+      'edit-fact-4': 'Indonesia',
+      'edit-contact-title': 'Mari <em>terhubung</em>.',
+      'edit-contact-lead': 'Terbuka untuk peluang kerja, kolaborasi proyek jaringan, atau sekadar diskusi teknis. Saya akan senang membalasnya.',
+      'edit-footer-1': '© 2024 Jihan Fauzi — Teknik Komputer & Jaringan',
+      'edit-footer-2': 'Dirancang & dibangun sendiri · <a href="#tentang">kembali ke atas ↑</a>'
+    },
+    profileImg: null,
+    skills: [
+      { num: '/01', title: 'Routing & Switching', tags: ['Cisco IOS', 'Mikrotik', 'VLAN', 'OSPF', 'Static Route'] },
+      { num: '/02', title: 'Server & Linux', tags: ['Debian', 'Ubuntu Server', 'Nginx', 'DNS', 'DHCP'] },
+      { num: '/03', title: 'Keamanan Jaringan', tags: ['Firewall', 'NAT', 'VPN', 'ACL'] },
+      { num: '/04', title: 'Infrastruktur', tags: ['Crimping', 'Fiber Optik', 'Rack Server', 'Access Point'] },
+      { num: '/05', title: 'Tools & Monitoring', tags: ['Wireshark', 'Winbox', 'Packet Tracer', 'GNS3'] },
+      { num: '/06', title: 'Dasar Web & Script', tags: ['HTML', 'CSS', 'Bash', 'Python dasar'] }
+    ],
+    experiences: [
+      { when: '2023 — 2024', title: 'Praktik Kerja Lapangan — Teknisi Jaringan', where: 'ISP Lokal · Divisi Infrastruktur', desc: 'Membantu instalasi dan konfigurasi perangkat Mikrotik di sisi pelanggan, melakukan troubleshooting koneksi, serta menyusun dokumentasi topologi jaringan untuk tim lapangan.' },
+      { when: '2022 — 2023', title: 'Anggota Divisi Jaringan Sekolah', where: 'Laboratorium TKJ', desc: 'Merawat lab komputer, mengelola jaringan lokal sekolah, dan menjadi pendamping praktikum untuk kelas di bawahnya.' },
+      { when: '2021 — 2024', title: 'Pendidikan — Teknik Komputer & Jaringan', where: 'SMK Negeri', desc: 'Menempuh pendidikan kejuruan dengan fokus pada jaringan komputer, administrasi server, dan keamanan dasar. Lulus dengan proyek akhir membangun jaringan sekolah berbasis VLAN.' }
+    ],
+    projects: [
+      { id: 'proj-1', title: 'Jaringan Sekolah Berbasis VLAN', desc: 'Segmentasi jaringan lab, guru, dan siswa dengan VLAN terpisah di switch manageable, dilengkapi akses kontrol.', stack: ['Mikrotik', 'VLAN', 'Switch'], imgSrc: null, svg: '<svg class="proj-svg" viewBox="0 0 24 24" fill="none" stroke="#1a1815" stroke-width="1.4"><rect x="3" y="4" width="18" height="5" rx="1"/><rect x="3" y="15" width="18" height="5" rx="1"/><circle cx="6" cy="6.5" r=".8" fill="#1a1815"/><circle cx="6" cy="17.5" r=".8" fill="#1a1815"/></svg>' },
+      { id: 'proj-2', title: 'Server Linux Internal', desc: 'Membangun server Debian untuk DHCP, DNS, dan file sharing internal menggunakan Nginx dan Samba.', stack: ['Debian', 'Nginx', 'DHCP', 'DNS'], imgSrc: null, svg: '<svg class="proj-svg" viewBox="0 0 24 24" fill="none" stroke="#1a1815" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>' },
+      { id: 'proj-3', title: 'Firewall & VPN Kantor Kecil', desc: 'Konfigurasi firewall rules dan VPN site-to-site untuk menghubungkan dua lokasi kecil dengan aman.', stack: ['Mikrotik', 'Firewall', 'VPN'], imgSrc: null, svg: '<svg class="proj-svg" viewBox="0 0 24 24" fill="none" stroke="#1a1815" stroke-width="1.4"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>' },
+      { id: 'proj-4', title: 'Dokumentasi Topologi Digital', desc: 'Membuat dokumentasi topologi jaringan berbasis web sederhana agar tim mudah membaca alur koneksi.', stack: ['HTML', 'CSS', 'Diagram'], imgSrc: null, svg: '<svg class="proj-svg" viewBox="0 0 24 24" fill="none" stroke="#1a1815" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 3 2.5 15 0 18M12 3c-2.5 3-2.5 15 0 18"/></svg>' }
+    ],
+    certificates: [
+      { id: 'cert-1', title: 'MTCNA', meta: 'Mikrotik · 2023', imgSrc: 'https://images.unsplash.com/photo-1589330694653-ded6df03f754?q=80&w=800&auto=format&fit=crop' },
+      { id: 'cert-2', title: 'CCNA Routing & Switching', meta: 'Cisco · 2024', imgSrc: 'https://images.unsplash.com/photo-1606761568499-6d2451b23c66?q=80&w=800&auto=format&fit=crop' },
+      { id: 'cert-3', title: 'Linux System Administrator', meta: 'LPI · 2023', imgSrc: 'https://images.unsplash.com/photo-1523289333742-be1143f6b766?q=80&w=800&auto=format&fit=crop' }
+    ]
+  };
+
+  function loadData() {
+    const saved = localStorage.getItem('jihanPortfolioDB');
+    if (saved) {
+      db = JSON.parse(saved);
+    } else {
+      db = JSON.parse(JSON.stringify(defaultState));
+    }
+    renderAll();
+  }
+
+  function saveData() {
+    try {
+      localStorage.setItem('jihanPortfolioDB', JSON.stringify(db));
+    } catch (e) {
+      alert('Gagal menyimpan! Memori browser penuh. Hapus beberapa foto/gambar.');
+    }
+  }
+
+  // ==========================================
+  // 1. INLINE EDITING (TEKS)
+  // ==========================================
+  function initInlineEditing() {
+    document.querySelectorAll('[contenteditable]').forEach(el => {
+      const key = el.id;
+      if (db.texts[key]) el.innerHTML = db.texts[key];
+      
+      el.onblur = null; // Hapus listener lama
+      
+      el.addEventListener('blur', () => {
+        db.texts[key] = el.innerHTML;
+        saveData();
+      });
+    });
+  }
+
+  function toggleEditMode(isAdmin) {
+    document.querySelectorAll('[contenteditable]').forEach(el => {
+      el.setAttribute('contenteditable', isAdmin ? 'true' : 'false');
+    });
+  }
+
+  // ==========================================
+  // 2. RENDER FUNCTIONS
+  // ==========================================
+  function renderSkills() {
+    const c = document.getElementById('skills-container');
+    c.innerHTML = db.skills.map(s => `
+      <div class="skill-card reveal in">
+        <span class="num">${s.num}</span>
+        <h3>${s.title}</h3>
+        <div class="tags">${s.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderExp() {
+    const c = document.getElementById('exp-container');
+    c.innerHTML = db.experiences.map((e, i) => `
+      <div class="tl-item reveal in">
+        <button class="btn-delete-item admin-only" onclick="deleteExp(${i})" title="Hapus Pengalaman">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+        <div class="when">${e.when}</div>
+        <h3>${e.title}</h3>
+        <div class="where">${e.where}</div>
+        <p>${e.desc}</p>
+      </div>
+    `).join('');
+  }
+
+  function renderProjects() {
+    const c = document.getElementById('projects-container');
+    c.innerHTML = db.projects.map((p, i) => `
+      <article class="proj reveal in">
+        <button class="btn-delete-item admin-only" onclick="deleteProj(${i})" title="Hapus Proyek" style="z-index: 20;">
+          <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        </button>
+        <div class="thumb">
+          <div class="thumb-bg"></div>
+          ${p.svg}
+          <img id="${p.id}" src="${p.imgSrc || ''}" class="proj-img" style="display: ${p.imgSrc ? 'block' : 'none'}" />
+          <label for="upload-${p.id}" class="proj-upload-btn" title="Ubah Gambar">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            Gambar
+          </label>
+          <input type="file" id="upload-${p.id}" accept="image/*" style="display: none;" onchange="handleProjUpload(event, '${p.id}')" />
+        </div>
+        <div class="body">
+          <h3>${p.title}</h3>
+          <p>${p.desc}</p>
+          <div class="stack">${p.stack.map(s => `<span>${s}</span>`).join('')}</div>
+        </div>
+      </article>
+    `).join('');
+  }
+
+  function renderCerts() {
+    const c = document.getElementById('cert-gallery-grid');
+    c.innerHTML = db.certificates.map((cert, i) => `
+      <div class="cert-card">
+        <div class="cert-img-wrapper" onclick="openLightbox('${cert.id}')">
+          <img id="${cert.id}" src="${cert.imgSrc || ''}" alt="${cert.title}" />
+          <label for="upload-${cert.id}" class="cert-upload-btn" onclick="event.stopPropagation()">
+            <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            Ganti
+          </label>
+          <input type="file" id="upload-${cert.id}" accept="image/*" style="display: none;" onchange="handleCertUpload(event, '${cert.id}')" />
+        </div>
+        <div class="cert-info">
+          <div>
+            <h4>${cert.title}</h4>
+            <div class="cert-meta">${cert.meta}</div>
+          </div>
+          <button class="cert-delete-btn admin-only" onclick="deleteCert(${i})" title="Hapus Sertifikat">
+            <svg viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderProfileImg() {
+    const img = document.getElementById('profile-img');
+    const placeholder = document.querySelector('.placeholder-svg');
+    if (db.profileImg) {
+      img.src = db.profileImg;
+      img.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      img.src = '';
+      img.style.display = 'none';
+      placeholder.style.display = 'block';
+    }
+  }
+
+  function renderAll() {
+    initInlineEditing();
+    renderSkills();
+    renderExp();
+    renderProjects();
+    renderCerts();
+    renderProfileImg();
+    checkLoginStatus();
+  }
+
+  // ==========================================
+  // 3. EVENT HANDLERS UPLOAD & HAPUS
+  // ==========================================
+  document.getElementById('file-upload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        db.profileImg = ev.target.result;
+        saveData();
+        renderProfileImg();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  window.handleProjUpload = function(e, projId) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const p = db.projects.find(x => x.id === projId);
+        if (p) p.imgSrc = ev.target.result;
+        saveData();
+        renderProjects();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  window.deleteProj = function(index) {
+    if(confirm('Hapus proyek ini?')) {
+      db.projects.splice(index, 1);
+      saveData();
+      renderProjects();
+    }
+  }
+
+  window.handleCertUpload = function(e, certId) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const c = db.certificates.find(x => x.id === certId);
+        if (c) c.imgSrc = ev.target.result;
+        saveData();
+        renderCerts();
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  window.deleteCert = function(index) {
+    if(confirm('Hapus sertifikat ini?')) {
+      db.certificates.splice(index, 1);
+      saveData();
+      renderCerts();
+    }
+  }
+
+  window.deleteExp = function(index) {
+    if(confirm('Hapus pengalaman ini?')) {
+      db.experiences.splice(index, 1);
+      saveData();
+      renderExp();
+    }
+  }
+
+  // ==========================================
+  // 4. ADMIN LOGIN LOGIC
+  // ==========================================
+  const loginModal = document.getElementById('admin-login-modal');
+  const adminLoginBtn = document.getElementById('admin-login-btn');
+  const adminBtnText = document.getElementById('admin-btn-text');
+  const passwordInput = document.getElementById('admin-password-input');
+
+  function checkLoginStatus() {
+    const isAdmin = sessionStorage.getItem('jihanAdminMode') === 'true';
+    if (isAdmin) {
+      document.body.classList.add('admin-mode');
+      adminBtnText.textContent = 'Logout';
+      toggleEditMode(true);
+    } else {
+      document.body.classList.remove('admin-mode');
+      adminBtnText.textContent = 'Login';
+      toggleEditMode(false);
+    }
+  }
+
+  adminLoginBtn.addEventListener('click', () => {
+    if (sessionStorage.getItem('jihanAdminMode') === 'true') {
+      sessionStorage.removeItem('jihanAdminMode');
+      checkLoginStatus();
+      alert('Anda telah keluar dari Mode Admin.');
+    } else {
+      passwordInput.value = '';
+      loginModal.classList.add('active');
+      setTimeout(() => passwordInput.focus(), 300);
+    }
+  });
+
+  document.getElementById('submit-login-btn').addEventListener('click', () => {
+    if (passwordInput.value === ADMIN_PASSWORD) {
+      sessionStorage.setItem('jihanAdminMode', 'true');
+      loginModal.classList.remove('active');
+      checkLoginStatus();
+    } else {
+      alert('Password salah!');
+    }
+  });
+
+  document.getElementById('cancel-login-btn').addEventListener('click', () => loginModal.classList.remove('active'));
+  loginModal.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.classList.remove('active'); });
+
+  // ==========================================
+  // 5. FITUR TAMBAH DATA (EXP, PROJ, CERT)
+  // ==========================================
+  // -- Tambah Pengalaman --
+  document.getElementById('add-exp-btn').addEventListener('click', () => document.getElementById('add-exp-modal').classList.add('active'));
+  document.getElementById('cancel-add-exp-btn').addEventListener('click', () => document.getElementById('add-exp-modal').classList.remove('active'));
+  document.getElementById('save-add-exp-btn').addEventListener('click', () => {
+    const when = document.getElementById('new-exp-when').value;
+    const title = document.getElementById('new-exp-title').value;
+    const where = document.getElementById('new-exp-where').value;
+    const desc = document.getElementById('new-exp-desc').value;
+    if(when && title) {
+      db.experiences.push({ when, title, where, desc });
+      saveData();
+      renderExp();
+      document.getElementById('add-exp-modal').classList.remove('active');
+      document.getElementById('new-exp-when').value = '';
+      document.getElementById('new-exp-title').value = '';
+      document.getElementById('new-exp-where').value = '';
+      document.getElementById('new-exp-desc').value = '';
+    } else alert('Harap isi Tahun dan Posisi!');
+  });
+
+  // -- Tambah Proyek --
+  document.getElementById('add-proj-btn').addEventListener('click', () => document.getElementById('add-proj-modal').classList.add('active'));
+  document.getElementById('cancel-add-proj-btn').addEventListener('click', () => document.getElementById('add-proj-modal').classList.remove('active'));
+  document.getElementById('save-add-proj-btn').addEventListener('click', () => {
+    const title = document.getElementById('new-proj-title').value;
+    const desc = document.getElementById('new-proj-desc').value;
+    const stackRaw = document.getElementById('new-proj-stack').value;
+    if(title) {
+      db.projects.push({
+        id: 'proj-' + Date.now(),
+        title, desc,
+        stack: stackRaw.split(',').map(s => s.trim()).filter(s => s),
+        imgSrc: null,
+        svg: '<svg class="proj-svg" viewBox="0 0 24 24" fill="none" stroke="#1a1815" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>'
+      });
+      saveData();
+      renderProjects();
+      document.getElementById('add-proj-modal').classList.remove('active');
+      document.getElementById('new-proj-title').value = '';
+      document.getElementById('new-proj-desc').value = '';
+      document.getElementById('new-proj-stack').value = '';
+    } else alert('Harap isi Judul!');
+  });
+
+  // -- Tambah Sertifikat --
+  document.getElementById('open-add-modal-btn').addEventListener('click', () => document.getElementById('add-cert-modal').classList.add('active'));
+  document.getElementById('cancel-add-cert-btn').addEventListener('click', () => document.getElementById('add-cert-modal').classList.remove('active'));
+  document.getElementById('save-add-cert-btn').addEventListener('click', () => {
+    const title = document.getElementById('new-cert-title').value;
+    const meta = document.getElementById('new-cert-meta').value;
+    if(title && meta) {
+      db.certificates.push({ id: 'cert-' + Date.now(), title, meta, imgSrc: 'https://images.unsplash.com/photo-1589330694653-ded6df03f754?q=80&w=800&auto=format&fit=crop' });
+      saveData();
+      renderCerts();
+      document.getElementById('add-cert-modal').classList.remove('active');
+      document.getElementById('new-cert-title').value = '';
+      document.getElementById('new-cert-meta').value = '';
+    } else alert('Harap isi Judul dan Penerbit!');
+  });
+
+  // ==========================================
+  // 6. MODAL GALERI SERTIFIKAT
+  // ==========================================
+  const galleryModal = document.getElementById('cert-gallery-modal');
+  document.getElementById('open-gallery-btn').addEventListener('click', () => {
+    galleryModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+  document.getElementById('close-gallery-btn').addEventListener('click', () => {
+    galleryModal.classList.remove('active');
+    document.body.style.overflow = '';
+    closeLightbox();
+  });
+  galleryModal.addEventListener('click', (e) => {
+    if (e.target === galleryModal) {
+      galleryModal.classList.remove('active');
+      document.body.style.overflow = '';
+      closeLightbox();
+    }
+  });
+
+  // Lightbox
+  const lightboxModal = document.getElementById('lightbox-modal');
+  const lightboxImg = document.getElementById('lightbox-img');
+  window.openLightbox = function(imageId) {
+    const img = document.getElementById(imageId);
+    if (img) {
+      lightboxImg.src = img.src;
+      lightboxModal.classList.add('active');
+    }
+  }
+  window.closeLightbox = function() {
+    lightboxModal.classList.remove('active');
+    setTimeout(() => lightboxImg.src = '', 300);
+  }
+
+  // ==========================================
+  // 7. FITUR PANEL ADMIN (BACKUP, RESET, DARK MODE)
+  // ==========================================
+  const toggleDarkModeBtn = document.getElementById('toggle-dark-mode');
+  if (localStorage.getItem('jihanDarkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+  }
+  toggleDarkModeBtn.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('jihanDarkMode', isDark ? 'true' : 'false');
+  });
+
+  document.getElementById('reset-data').addEventListener('click', () => {
+    if (confirm('PERINGATAN! Ini akan menghapus semua foto, teks, dan data kustom Anda dan mengembalikannya ke awal. Lanjutkan?')) {
+      localStorage.removeItem('jihanPortfolioDB');
+      sessionStorage.removeItem('jihanAdminMode');
+      location.reload();
+    }
+  });
+
+  document.getElementById('export-data').addEventListener('click', () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
+    const dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", "jihan_portfolio_backup.json");
+    dlAnchorElem.click();
+  });
+
+  const importBtn = document.getElementById('import-data-btn');
+  const importInput = document.getElementById('import-data-input');
+  
+  importBtn.addEventListener('click', () => importInput.click());
+  importInput.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        try {
+          const importedData = JSON.parse(event.target.result);
+          if (importedData.texts && importedData.skills) {
+            db = importedData;
+            saveData();
+            renderAll();
+            alert('Data berhasil dipulihkan!');
+          } else {
+            alert('Format file tidak valid.');
+          }
+        } catch (err) {
+          alert('Gagal membaca file JSON.');
+        }
+      };
+      reader.readAsText(file);
+    }
+  });
+
+  // ==========================================
+  // 8. CETAK CV (PRINT)
+  // ==========================================
+  document.getElementById('print-cv-btn').addEventListener('click', () => {
+    window.print();
+  });
+
+  // ==========================================
+  // 9. CUSTOM CURSOR & ANIMATION
+  // ==========================================
+  const cursor = document.getElementById('custom-cursor');
+  document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+  });
+
+  const hoverElements = 'a, button, label, input, textarea';
+  document.body.addEventListener('mouseover', (e) => {
+    if(e.target.closest(hoverElements)) cursor.classList.add('hovering');
+  });
+  document.body.addEventListener('mouseout', (e) => {
+    if(e.target.closest(hoverElements)) cursor.classList.remove('hovering');
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach((el) => observer.observe(el));
+
+  // INISIALISASI AWAL
+  loadData();
+
+  // ESC Key Handler
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      if (lightboxModal.classList.contains('active')) closeLightbox();
+      if (galleryModal.classList.contains('active')) {
+        galleryModal.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+      if (loginModal.classList.contains('active')) loginModal.classList.remove('active');
+      document.querySelectorAll('.mini-modal-overlay').forEach(m => m.classList.remove('active'));
+    }
+  });
+</script>
+</body>
+</html>
