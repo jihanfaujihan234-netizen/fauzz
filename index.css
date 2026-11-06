@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply overflow-x-hidden font-sans antialiased transition-colors duration-300;
+    background-color: #e9e9ed; /* platinum (mode terang) */
+    color: #16161a;
+  }
+
+  html.dark body {
+    background-color: #0b0b0d; /* silver-dark (mode utama) */
+    color: #e8e8ec;
+  }
+
+  section[id] {
+    scroll-margin-top: 5.5rem;
+  }
+
+  /* Seleksi teks bernuansa silver */
+  ::selection {
+    background: rgba(200, 200, 216, 0.35);
+    color: #0b0b0d;
+  }
+
+  /* Scrollbar chrome/silver */
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #e9e9ed;
+  }
+  html.dark ::-webkit-scrollbar-track {
+    background: #141418;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: linear-gradient(180deg, #9a9aa5, #e0e0e8 50%, #9a9aa5);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #c0c0c8, #e8e8ec 50%, #c0c0c8);
+  }
+}
+
+@layer components {
+  /* Kaca buram metalik */
+  .glass {
+    @apply border border-platinum-border/70 bg-platinum-panel/70 backdrop-blur-xl dark:border-silver-border/70 dark:bg-silver-bg/60;
+  }
+
+  .glass-strong {
+    @apply border border-platinum-border bg-platinum-panel/85 backdrop-blur-2xl dark:border-silver-border dark:bg-silver-bg/85;
+  }
+
+  /* Teks chrome/silver (gradient metalik) */
+  .text-gradient {
+    background-image: linear-gradient(90deg, #6e6e78 0%, #16161a 48%, #45454e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  html.dark .text-gradient {
+    background-image: linear-gradient(90deg, #9a9aa5 0%, #e8e8ec 48%, #c0c0c8 100%);
+  }
+
+  .text-chrome {
+    background-image: linear-gradient(90deg, #6e6e78, #16161a 55%, #55555e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  html.dark .text-chrome {
+    background-image: linear-gradient(90deg, #c0c0c8, #e8e8ec 55%, #9a9aa5);
+  }
+
+  /* Tombol utama: efek chrome/silver */
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-7 py-3.5 text-sm font-semibold transition-all duration-300;
+    background-image: linear-gradient(to bottom right, #9a9aa5, #e0e0e8 50%, #9a9aa5);
+    color: #0b0b0d;
+    box-shadow: 0 12px 32px -14px rgba(154, 154, 165, 0.55);
+  }
+
+  .btn-primary:hover {
+    box-shadow:
+      0 0 20px rgba(200, 200, 216, 0.15),
+      0 12px 32px -14px rgba(200, 200, 216, 0.35);
+  }
+
+  /* Kilau bergerak saat hover (efek chrome) */
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s ease;
+  }
+
+  .btn-primary:hover::after {
+    transform: translateX(120%);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.7;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border px-7 py-3.5 text-sm font-semibold transition-all duration-300;
+    border-color: #caccd2;
+    color: #16161a;
+  }
+
+  .btn-ghost:hover {
+    border-color: #6e6e78;
+    box-shadow: 0 0 20px rgba(200, 200, 216, 0.15);
+  }
+
+  html.dark .btn-ghost {
+    border-color: #2a2a30;
+    color: #e8e8ec;
+  }
+
+  html.dark .btn-ghost:hover {
+    border-color: #c0c0c8;
+    box-shadow: 0 0 20px rgba(200, 200, 216, 0.15);
+  }
+
+  /* Kartu dengan hover glow silver + metallic shine diagonal */
+  .card-hover {
+    position: relative;
+    border: 1px solid #caccd2;
+    transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Efek metallic shine saat hover (tipis, hanya di atas permukaan) */
+  .card-hover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    background: linear-gradient(135deg, transparent 40%, rgba(255, 255, 255, 0.05) 50%, transparent 60%);
+  }
+
+  .card-hover:hover::after {
+    opacity: 1;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-6px);
+    border-color: rgba(110, 110, 120, 0.5);
+    box-shadow: 0 0 20px rgba(200, 200, 216, 0.15);
+  }
+
+  html.dark .card-hover {
+    border-color: #2a2a30;
+  }
+
+  html.dark .card-hover:hover {
+    border-color: rgba(192, 192, 200, 0.5);
+    box-shadow: 0 0 20px rgba(200, 200, 216, 0.15);
+  }
+
+  /* Glow hover generik untuk elemen kecil */
+  .glow-hover {
+    transition: all 0.35s ease;
+  }
+
+  .glow-hover:hover {
+    box-shadow: 0 0 20px rgba(200, 200, 216, 0.15);
+  }
+}
+
+@layer utilities {
+  /* Masker fade kiri-kanan untuk ticker */
+  .mask-fade-x {
+    -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  }
+
+  /* Pola grid halus bernuansa logam */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(160, 160, 170, 0.13) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(160, 160, 170, 0.13) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Tekstur noise/grain untuk kesan metalik premium */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  }
+
+  /* Kilau chrome horizontal untuk elemen kecil */
+  .chrome-bg {
+    background-image: linear-gradient(to bottom right, #9a9aa5, #e0e0e8 50%, #9a9aa5);
+  }
+}
